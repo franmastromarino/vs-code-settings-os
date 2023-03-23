@@ -5,7 +5,9 @@ This extension allows you to manage different settings based on your operating s
 The extension automatically copies the content of the following files, depending on the current operating system, into the .vscode/settings.json file:
 
 `.vscode/settings.windows.json for Windows`
+
 `.vscode/settings.macos.json for macOS`
+
 `.vscode/settings.linux.json for Linux`
 
 This makes it easier to switch between operating systems while maintaining a consistent development environment.
@@ -14,7 +16,9 @@ This makes it easier to switch between operating systems while maintaining a con
 Create the appropriate settings file(s) for your operating system(s) in your project's .vscode folder:
 
 `.vscode/settings.windows.json for Windows`
+
 `.vscode/settings.macos.json for macOS`
+
 `.vscode/settings.linux.json for Linux`
 
 Define your desired settings in each file, and save them.
@@ -35,5 +39,6 @@ After activating the extension, your .vscode/settings.json file will be updated 
   "editor.fontSize": 14,
   "workbench.colorTheme": "Solarized Dark"
 }
+```
 
 Enjoy maintaining consistent settings across different operating systems!

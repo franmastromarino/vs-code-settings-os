@@ -18,10 +18,17 @@ function getOsName() {
 }
 
 async function getOsSettingsFileContent() {
-
 	const os = getOsName();
-
 	const filePath = path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, '.vscode', `settings.${os}.json`);
+	return getFileContent(filePath)
+}
+
+async function getCommonSettingsFileContent() {
+	const filePath = path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, '.vscode', `settings.common.json`);
+	return getFileContent(filePath)
+}
+
+async function getFileContent(filePath) {
 
 	if (fs.existsSync(filePath)) {
 		try {
@@ -37,7 +44,7 @@ async function getOsSettingsFileContent() {
 	}
 }
 
-async function updateSettingsFile(osSettings) {
+async function updateSettingsFile(newSettings) {
 
 	const filePath = path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, '.vscode', `settings.json`);
 
@@ -45,11 +52,11 @@ async function updateSettingsFile(osSettings) {
 		await createFileIfNotExists(filePath, '{}');
 	}
 
-	const settings = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath, 'utf8')) : {};
-	const newSettings = deepMerge(settings, osSettings);
+	const defaultSettings = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath, 'utf8')) : {};
+	const settings = deepMerge(defaultSettings, newSettings);
 
 	return new Promise((resolve, reject) => {
-		fs.writeFile(filePath, JSON.stringify(newSettings, null, 4), 'utf8', (error) => {
+		fs.writeFile(filePath, JSON.stringify(settings, null, 4), 'utf8', (error) => {
 			if (error) {
 				reject(error);
 			} else {
