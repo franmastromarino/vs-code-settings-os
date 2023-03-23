@@ -1,0 +1,45 @@
+{
+  "name": "vs-code-settings-os",
+  "displayName": "VS Code Settings OS",
+  "description": "Visual Studio code settings based on operative system.",
+  "version": "0.0.1",
+  "publisher": "franmastromarino",
+  "engines": {
+    "vscode": "^1.76.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vs-code-settings-os.updateSettings",
+        "title": "Update Settings for OS"
+      }
+    ]
+  },
+  "activationEvents": [
+    "onCommand:os-settings-changer.updateSettings"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.76.0",
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "eslint": "^8.34.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "typescript": "^4.9.5",
+    "@vscode/test-electron": "^2.2.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/franmastromarino/vs-code-settings-os.git"
+  }
+}
