@@ -57,11 +57,9 @@ async function getFileContent(filePath) {
 		return osSettings;
 		} catch (error) {
 		vscode.window.showErrorMessage(`Error reading settings file: ${error.message}`);
-		return {};
 		}
 	} else {
 		vscode.window.showErrorMessage(`Settings file not found: ${filePath}`);
-		return {};
 	}
 }
 
@@ -78,11 +76,9 @@ async function getDefaultSettingsFileContent() {
 	if(settings) {
 		return settings;
 	}
-
-	return {}
 }
 
-async function updateSettingsFile(newSettings) {
+async function updateSettingsFile() {
 
 	const filePath = getSettingFilePath();
 
@@ -90,11 +86,13 @@ async function updateSettingsFile(newSettings) {
 		await createFileIfNotExists(filePath, '{}');
 	}
 
+	const os = getOsName();
+	const currentSettings = await getSettingsFileContent(os);
 	const defaultSettings = await getDefaultSettingsFileContent();
-	const settings = deepMerge(defaultSettings, newSettings);
+	const newSettings = deepMerge(defaultSettings, currentSettings);
 
 	return new Promise((resolve, reject) => {
-		fs.writeFile(filePath, JSON.stringify(settings, null, 4), 'utf8', (error) => {
+		fs.writeFile(filePath, JSON.stringify(newSettings, null, 4), 'utf8', (error) => {
 			if (error) {
 				reject(error);
 			} else {
@@ -164,12 +162,11 @@ async function vsCodeUpdateSettingsFile() {
 		vscode.window.showErrorMessage('No workspace folder opened.');
 		return;
 	}
-
+	
 	const os = getOsName();
-	const osSettings = await getSettingsFileContent(os);
 
 	try {
-		await updateSettingsFile(osSettings);
+		await updateSettingsFile();
 		vscode.window.showInformationMessage(`Updated settings.json for ${os} operating system.`);
 	} catch (error) {
 		vscode.window.showErrorMessage(`Error updating settings.json: ${error.message}`);
