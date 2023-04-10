@@ -41,4 +41,6 @@ After activating the extension, your .vscode/settings.json file will be updated 
 }
 ```
 
-Enjoy maintaining consistent settings across different operating systems!
+To prevent the commits of an updated settings.json file in your project, you can create a settings.all.json file that contains the common settings across all operating systems. Each time you open your project, the VS Code Settings OS extension will update the settings.json file based on your operating system and the content of the settings.${os}.json file.
+
+Now you can include the settings.json file in your .gitignore and enjoy maintaining consistent settings across different operating systems!

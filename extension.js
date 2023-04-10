@@ -1,35 +1,33 @@
 const vscode = require('vscode');
-const fs = require('fs');
-const path = require('path');
-const { getOsSettingsFileContent, updateSettingsFile, getOsName } = require('./helpers')
+
+const { vsCodeUpdateSettingsFile } = require('./helpers')
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
 
-	let disposable = vscode.commands.registerCommand('vs-code-settings-os.updateSettings', async function () {
+    // Check if the workspace is already open when the extension is activated
+    if (vscode.workspace.workspaceFolders) {
+        vsCodeUpdateSettingsFile();
+    }
 
-		const workspaceFolders = vscode.workspace.workspaceFolders;
+    // Listen for the onDidChangeWorkspaceFolders event
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeWorkspaceFolders(async (event) => {
+            if (event.added.length > 0) {
+                vsCodeUpdateSettingsFile();
+            }
+        })
+    );
 
-        if (!workspaceFolders) {
-            vscode.window.showErrorMessage('No workspace folder opened.');
-            return;
-        }
-
-        const os = getOsName();
-        const osSettings = await getOsSettingsFileContent();
-
-        try {
-            await updateSettingsFile(osSettings);
-            vscode.window.showInformationMessage(`Updated settings.json for ${os} operating system.`);
-        } catch (error) {
-            vscode.window.showErrorMessage(`Error updating settings.json: ${error.message}`);
-        }
-		
-	});
-
-	context.subscriptions.push(disposable);
+    // Listet for the command updateSettings
+	context.subscriptions.push(
+        vscode.commands.registerCommand('vs-code-settings-os.updateSettings', async () => {
+            vsCodeUpdateSettingsFile();
+        })
+    );
+    
 }
 
 // This method is called when your extension is deactivated

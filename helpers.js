@@ -2,41 +2,62 @@ const vscode = require('vscode');
 const fs = require('fs');
 const path = require('path');
 
+const PLATFORMS = {
+	all: 'all',
+	win32: 'windows',
+	darwin: 'macos',
+	linux: 'linux',
+};
+
+async function isValid() {
+
+	const settingsFiles = Object.values(PLATFORMS).map(os => getSettingFilePath(os));
+  
+	const results = await Promise.all(settingsFiles.map(fileExists));
+  
+	// all: true, mac: false, windows: true, linux: true
+	return !!results[0] || !!results[1] || !!results[2] || !!results[3];
+}
+
+function getSettingFilePath(os) {
+	
+	const fileName = os ? `settings.${os}.json` : 'settings.json';
+
+	return path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, '.vscode', fileName);
+}
+
+async function getSettingsFileContent(os) {
+	const filePath = getSettingFilePath(os);
+	return getFileContent(filePath)
+}
+
 function getOsName() {
 	const os = process.platform;
-	switch (os) {
-		case 'win32':
-			return 'windows';
-		case 'darwin':
-			return 'macos';
-		case 'linux':
-			return 'linux';
-		default:
-			vscode.window.showErrorMessage(`Unsupported operating system: ${os}`);
-			return {};
+	if (PLATFORMS.hasOwnProperty(os)) {
+		return PLATFORMS[os];
+	} else {
+		vscode.window.showErrorMessage(`Unsupported operating system: ${os}`);
+		return false;
 	}
 }
 
-async function getOsSettingsFileContent() {
-	const os = getOsName();
-	const filePath = path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, '.vscode', `settings.${os}.json`);
-	return getFileContent(filePath)
-}
-
-async function getCommonSettingsFileContent() {
-	const filePath = path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, '.vscode', `settings.common.json`);
-	return getFileContent(filePath)
-}
-
+async function fileExists(filePath) {
+	try {
+	  await fs.promises.access(filePath, fs.constants.F_OK);
+	  return true;
+	} catch (error) {
+	  return false;
+	}
+  }
+  
 async function getFileContent(filePath) {
-
-	if (fs.existsSync(filePath)) {
+	if (await fileExists(filePath)) {
 		try {
-			const osSettings = JSON.parse(await fs.promises.readFile(filePath, 'utf8'));
-			return osSettings;
+		const osSettings = JSON.parse(await fs.promises.readFile(filePath, 'utf8'));
+		return osSettings;
 		} catch (error) {
-			vscode.window.showErrorMessage(`Error reading settings file: ${error.message}`);
-			return {};
+		vscode.window.showErrorMessage(`Error reading settings file: ${error.message}`);
+		return {};
 		}
 	} else {
 		vscode.window.showErrorMessage(`Settings file not found: ${filePath}`);
@@ -44,15 +65,32 @@ async function getFileContent(filePath) {
 	}
 }
 
+async function getDefaultSettingsFileContent() {
+
+	const all = await getSettingsFileContent(PLATFORMS.all);
+
+	if (all) {
+		return all;
+	}
+
+	const settings = await getSettingsFileContent();
+
+	if(settings) {
+		return settings;
+	}
+
+	return {}
+}
+
 async function updateSettingsFile(newSettings) {
 
-	const filePath = path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, '.vscode', `settings.json`);
+	const filePath = getSettingFilePath();
 
-	if (!fs.existsSync(filePath)) {
+	if (!await fileExists(filePath)) {
 		await createFileIfNotExists(filePath, '{}');
 	}
 
-	const defaultSettings = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath, 'utf8')) : {};
+	const defaultSettings = await getDefaultSettingsFileContent();
 	const settings = deepMerge(defaultSettings, newSettings);
 
 	return new Promise((resolve, reject) => {
@@ -113,8 +151,31 @@ async function createFileIfNotExists(filePath, content = '') {
 	}
 }
 
+async function vsCodeUpdateSettingsFile() {
+
+	if (!await isValid()) {
+		vscode.window.showErrorMessage('No workspace folder opened.');
+		return;
+	}
+
+	const workspaceFolders = vscode.workspace.workspaceFolders;
+
+	if (!workspaceFolders) {
+		vscode.window.showErrorMessage('No workspace folder opened.');
+		return;
+	}
+
+	const os = getOsName();
+	const osSettings = await getSettingsFileContent(os);
+
+	try {
+		await updateSettingsFile(osSettings);
+		vscode.window.showInformationMessage(`Updated settings.json for ${os} operating system.`);
+	} catch (error) {
+		vscode.window.showErrorMessage(`Error updating settings.json: ${error.message}`);
+	}
+}
+
 module.exports = {
-	getOsSettingsFileContent,
-	updateSettingsFile,
-	getOsName
+	vsCodeUpdateSettingsFile
 }
