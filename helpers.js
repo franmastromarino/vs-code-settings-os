@@ -15,7 +15,6 @@ async function isValid() {
   
 	const results = await Promise.all(settingsFiles.map(fileExists));
   
-	// all: true, mac: false, windows: true, linux: true
 	return !!results[0] || !!results[1] || !!results[2] || !!results[3];
 }
 
@@ -150,20 +149,19 @@ async function createFileIfNotExists(filePath, content = '') {
 }
 
 async function vsCodeUpdateSettingsFile() {
+	
+	const os = getOsName();
 
 	if (!await isValid()) {
-		vscode.window.showErrorMessage('No workspace folder opened.');
+		vscode.window.showErrorMessage(`No settings.${os}.json file found.`);
 		return;
 	}
 
 	const workspaceFolders = vscode.workspace.workspaceFolders;
 
 	if (!workspaceFolders) {
-		vscode.window.showErrorMessage('No workspace folder opened.');
 		return;
 	}
-	
-	const os = getOsName();
 
 	try {
 		await updateSettingsFile();
