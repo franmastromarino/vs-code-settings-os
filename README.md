@@ -1,3 +1,5 @@
+[VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=franmastromarino.vs-code-settings-os)
+
 #VS Code Settings for Mac Windows and Linux
 
 ## Manage Visual Studio Code Settings Across Mac, Windows, and Linux
