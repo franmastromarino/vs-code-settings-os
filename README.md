@@ -23,6 +23,14 @@ This extension enables you to manage different settings based on your operating 
 2. Define your desired settings in each file and save them.
 3. The extension will automatically copy the contents of the corresponding file into `.vscode/settings.json` based on the operating system you're currently using.
 
+In order to enjoy autocompletion and validation of your operating system settings files, add the `"$schema"` key at the top of each file:
+
+```json
+{
+  "$schema": "vscode://schemas/settings/user"
+}
+```
+
 ## Example
 
 `.vscode/settings.json`:
