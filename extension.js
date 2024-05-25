@@ -10,6 +10,7 @@ function activate(context) {
     // Check if the workspace is already open when the extension is activated
     if (vscode.workspace.workspaceFolders) {
         vsCodeUpdateSettingsFile();
+        setupWatcher(context);
     }
 
     // Listen for the onDidChangeWorkspaceFolders event
@@ -17,6 +18,7 @@ function activate(context) {
         vscode.workspace.onDidChangeWorkspaceFolders(async (event) => {
             if (event.added.length > 0) {
                 vsCodeUpdateSettingsFile();
+                setupWatcher(context);
             }
         })
     );
@@ -27,7 +29,32 @@ function activate(context) {
             vsCodeUpdateSettingsFile();
         })
     );
+}
+
+let previousWatcher
+
+/**
+ * Listen for changes to OS settings files
+ * @param {vscode.ExtensionContext} context
+ */
+function setupWatcher(context) {
+    if (previousWatcher) {
+        previousWatcher.dispose()
+        previousWatcher = undefined
+    }
     
+    const watcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(vscode.workspace.workspaceFolders[0].uri, '.vscode/settings.*.json'))
+    watcher.onDidChange(function() {
+        vsCodeUpdateSettingsFile();
+    })
+    watcher.onDidCreate(function() {
+        vsCodeUpdateSettingsFile();
+    })
+    watcher.onDidDelete(function() {
+        vsCodeUpdateSettingsFile();
+    })
+    context.subscriptions.push(watcher)
+    previousWatcher = watcher
 }
 
 // This method is called when your extension is deactivated
