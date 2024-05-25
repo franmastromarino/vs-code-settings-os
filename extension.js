@@ -21,7 +21,7 @@ function activate(context) {
         })
     );
 
-    // Listet for the command updateSettings
+    // Listen for the command updateSettings
 	context.subscriptions.push(
         vscode.commands.registerCommand('vs-code-settings-os.updateSettings', async () => {
             vsCodeUpdateSettingsFile();
