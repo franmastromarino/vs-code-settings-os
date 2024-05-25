@@ -29,6 +29,9 @@
     "package": "vsce package",
     "publish": "vsce publish"
   },
+  "dependencies": {
+    "jsonc-parser": "^3.2.1"
+  },
   "devDependencies": {
     "@types/vscode": "^1.76.0",
     "@types/glob": "^8.1.0",
