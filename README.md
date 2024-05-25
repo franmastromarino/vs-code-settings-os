@@ -41,7 +41,7 @@ Suppose you are working on macOS and have the following settings:
 }
 ```
 
-After activating the extension, your .vscode/settings.json file will be updated to:
+After activating the extension, your `.vscode/settings.json` file will be updated to:
 
 ```json
 {
@@ -50,11 +50,11 @@ After activating the extension, your .vscode/settings.json file will be updated 
 }
 ```
 
-To prevent commits of an updated settings.json file in your project, create a settings.all.json file containing common settings across all operating systems. 
+To prevent commits of an updated `settings.json` file in your project, create a `settings.all.json` file containing common settings across all operating systems. 
 
-Each time you open your project, the VS Code Settings for Mac Windows and Linux extension will update the settings.json file based on your operating system and the content of the settings.${os}.json file.
+Each time you open your project, the VS Code Settings for Mac Windows and Linux extension will update the `settings.json` file based on your operating system and the content of the `settings.${os}.json` file.
 
-Now you can include the settings.json file in your .gitignore and enjoy maintaining consistent settings across different operating systems!
+Now you can include the `settings.json` file in your `.gitignore` and enjoy maintaining consistent settings across different operating systems!
 
 Simply copy and paste the code above into your Markdown editor, and it will render the improved content.
 
