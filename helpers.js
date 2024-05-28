@@ -1,6 +1,7 @@
 const vscode = require('vscode');
 const fs = require('fs');
 const path = require('path');
+const parser = require('jsonc-parser');
 
 const PLATFORMS = {
 	all: 'all',
@@ -52,7 +53,7 @@ async function fileExists(filePath) {
 async function getFileContent(filePath) {
 	if (await fileExists(filePath)) {
 		try {
-		const osSettings = JSON.parse(await fs.promises.readFile(filePath, 'utf8'));
+		const osSettings = parser.parse(await fs.promises.readFile(filePath, 'utf8'));
 		return osSettings;
 		} catch (error) {
 		vscode.window.showErrorMessage(`Error reading settings file: ${error.message}`);
