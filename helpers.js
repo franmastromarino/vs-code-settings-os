@@ -154,7 +154,7 @@ async function vsCodeUpdateSettingsFile() {
 	const os = getOsName();
 
 	if (!await isValid()) {
-		vscode.window.showErrorMessage(`No settings.${os}.json file found.`);
+		vscode.window.setStatusBarMessage(`OS Settings: No settings.${os}.json file found.`, 5000);
 		return;
 	}
 
@@ -166,7 +166,7 @@ async function vsCodeUpdateSettingsFile() {
 
 	try {
 		await updateSettingsFile();
-		vscode.window.showInformationMessage(`Updated settings.json for ${os} operating system.`);
+		vscode.window.setStatusBarMessage(`OS Settings: Updated settings.json for ${os}.`, 5000);
 	} catch (error) {
 		vscode.window.showErrorMessage(`Error updating settings.json: ${error.message}`);
 	}
