@@ -2,7 +2,7 @@
   "name": "vs-code-settings-os",
   "displayName": "VS Code Settings for Mac Windows and Linux",
   "description": "Visual Studio code settings based on operative system.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "publisher": "franmastromarino",
   "engines": {
     "vscode": "^1.76.0"
