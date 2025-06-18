@@ -12,6 +12,16 @@
   ],
   "main": "./extension.js",
   "contributes": {
+    "configuration": {
+      "title": "VS Code Settings for Mac Windows and Linux",
+      "properties": {
+        "vscode-settings-os.settings.showErrors": {
+          "type": "boolean",
+          "default": true,
+          "description": "Controls whether error messages should be shown to the user"
+        }
+      }
+    },
     "commands": [
       {
         "command": "vs-code-settings-os.updateSettings",
